@@ -1,0 +1,450 @@
+import { useState } from "react";
+
+const phases = [
+  {
+    id: 0,
+    label: "FASE 0",
+    title: "Pós-Contrato",
+    subtitle: "Semanas −4 a −1 · Antes do início",
+    etapa: "DIAGNÓSTICO E CONFIGURAÇÃO",
+    color: "#2d2b2b",
+    accent: "#767676",
+    icon: "◈",
+    pronto: [
+      { cat: "Comercial e Jurídico", items: ["Proposta comercial assinada com escopo completo dos 9 meses", "NDA e contrato de confidencialidade com a empresa-cliente", "Cronograma macro de entregas (PDF executivo, 1 página)", "Carta de boas-vindas de Rodrigo Minotauro (vídeo 2–3 min)"] },
+      { cat: "Assessment de Diagnóstico", items: ["Formulário de Assessment 360 configurado na plataforma (Leadership Circle Profile ou versão proprietária)", "Guia de instrução para o participante preencher o 360 (PDF + vídeo de 3 min)", "Formulário de Perfil do Líder: background, desafios atuais, metas de desenvolvimento", "Template de KPIs-Alvo por Líder (planilha com categorias pré-definidas: financeiro, time, execução, IA)"] },
+      { cat: "Roteiro de Entrevistas C-levels", items: ["Roteiro de entrevista semiestruturada para C-levels (8–12 perguntas calibradas)", "Template de Mapa Estratégico da Empresa (canvas pré-formatado)", "Briefing do programa para o sponsor executivo (2 págs): o que é esperado, como apoiar sem interferir"] },
+      { cat: "Tecnologia e Plataformas", items: ["LMS configurado: estrutura de módulos, identidade visual da empresa, acessos dos participantes", "Mentor IA Minotauro V1: prompts-base, fluxos de check-in diário, onboarding personalizado com o método", "Dashboard de KPIs V0: baseline + colunas de rastreamento mensal (meses 1–9)", "Grupos de comunicação criados: cohort, facilitador+coaches, RH+gestão"] },
+    ],
+    aovivo: [
+      { tipo: "Reunião Executiva com CHO/CEO/Sponsor (90 min) — Presencial ou Online", desc: "Alinhamento de expectativas, validação dos KPIs-alvo por participante, mapeamento dos desafios estratégicos críticos, definição de regras do programa (frequência, confidencialidade, comprometimento da empresa)" },
+      { tipo: "Entrevistas Individuais com C-levels (45 min × 2–3) — Online", desc: "Diagnóstico qualitativo: quais são os maiores gargalos de liderança na empresa? Quais comportamentos precisam mudar? O que o C-level espera ver diferente em 9 meses? Subsidia a personalização do conteúdo" },
+      { tipo: "Kick-off Interno da Equipe de Produção — Online", desc: "Alinhamento do time de produção: papéis, responsabilidades, cronograma de produção mensal, protocolos de qualidade, sistema de aprovação de conteúdo com Rodrigo Minotauro" },
+    ],
+    ferramentas: [
+      { nome: "Leadership Circle Profile 360", ref: "Robert Anderson & William Adams — CCL (2006)", uso: "Assessment de 360° com 29 competências de liderança criativa + reativa, benchmark com 500K+ líderes globais. Aplicado como baseline no Mês 1 e comparativo no Mês 9" },
+      { nome: "McKinsey 7-S Framework", ref: "McKinsey & Company — Peters & Waterman (1980)", uso: "Mapeamento das 7 dimensões organizacionais (Strategy, Structure, Systems, Staff, Style, Skills, Shared Values) para contextualizar os desafios dos líderes no diagnóstico com C-levels" },
+      { nome: "Balanced Scorecard — KPI Canvas", ref: "Robert Kaplan & David Norton — Harvard Business Review (1992)", uso: "Definição de indicadores de resultado por perspectiva: financeira, clientes, processos internos e aprendizado/crescimento. Base do template de KPIs-alvo por líder" },
+      { nome: "RAG + Fine-tuning do Mentor IA", ref: "Retrieval-Augmented Generation — Lewis et al., Meta AI (2020)", uso: "Treinamento do IA Coach com o conteúdo proprietário do Método Minotauro: etapas, ferramentas, linguagem e filosofia do método são incorporados ao modelo para personalizar as interações" },
+    ],
+  },
+  {
+    id: 1,
+    label: "MÊS 1",
+    title: "POSIÇÃO",
+    subtitle: "Março 2026 · Semanas 1–4",
+    etapa: "Clareza da luta · Kick-off · Baseline 360",
+    color: "#1a2a20",
+    accent: "#e1af58",
+    icon: "①",
+    pronto: [
+      { cat: "Kit Físico do Participante", items: ["Diário do Campeão (capa dura, 200 págs): planejamento diário, reflexão semanal, check-in de KPIs mensais", "Manual do Octógono da Liderança (80 págs): método completo com exemplos, frameworks e ferramentas", "Cards do Método (baralho 40 cards): um conceito-chave por card para uso diário", "Planner de Alta Performance (3 meses): agenda com blocos de foco e recuperação", "Pen drive com materiais digitais do Kit"] },
+      { cat: "Trilha 1 — POSIÇÃO (LMS)", items: ["Vídeo 1.1: O Octógono da Liderança — visão geral do método (12 min, Rodrigo Minotauro)", "Vídeo 1.2: Clareza da Luta — como definir sua posição estratégica (10 min)", "Vídeo 1.3: Mapa de Responsabilidade Estratégica — o que é e como construir (8 min)", "Vídeo 1.4: Os 3 Gargalos Principais — diagnóstico de obstáculos de liderança (10 min)", "Vídeo 1.5: Contrato de Resultado — como comprometer-se de forma irreversível (8 min)", "Workbook digital Módulo 1 (PDF interativo, 24 págs): exercícios por vídeo", "Quiz de fixação pós-trilha (10 questões no LMS)"] },
+      { cat: "Microlearning Semanal (S1–S4)", items: ["S1: 'Por que a maioria dos líderes perde porque não sabe onde está lutando' (4 min)", "S2: 'Clareza vs. Certeza — a diferença que separa líderes decisivos de líderes paralisados' (4 min)", "S3: 'O líder gargalo: como identificar se você é o problema do seu time' (5 min)", "S4: 'Contrato de resultado: como se comprometer de um jeito que não tem como voltar atrás' (4 min)"] },
+      { cat: "Materiais do Encontro Presencial", items: ["Roteiro facilitado do Workshop Kick-off (40 págs): tempo por atividade, instruções de facilitação, debrief", "Slides do Kick-off (80 slides, branded com identidade do programa)", "Protocolo de Segurança Psicológica (Edmondson): contrato da cohort, exercício de vulnerabilidade, regras de confidencialidade", "Templates impressos A3: Mapa de Posição, Octógono Baseline, Contrato de Resultado (1 por participante)"] },
+    ],
+    aovivo: [
+      { tipo: "Sessão de Diagnóstico com C-levels (2h) — Presencial", desc: "Alinhamento de expectativas, validação dos KPIs-alvo por líder, mapeamento dos desafios estratégicos, apresentação do cronograma e regras do programa para a alta liderança" },
+      { tipo: "Workshop Kick-off com os Líderes (6–8h) — Presencial", desc: "Onboarding do Octógono da Liderança · Dinâmica de segurança psicológica (protocolo Edmondson) · Construção do Contrato da Cohort · Mapa de Posição individual · Definição dos 3 gargalos principais · Entrega do Kit Físico · Sessão ao vivo com Rodrigo Minotauro" },
+      { tipo: "Coaching Individual — Sessão 1 (60 min) — Online ou Presencial", desc: "Debrief do Assessment 360: interpretação dos resultados, identificação dos pontos cegos, definição de 3 objetivos de desenvolvimento que guiarão as 4 sessões de coaching ao longo do programa" },
+      { tipo: "1º Encontro Tático Quinzenal (90 min) — Online ao Vivo", desc: "Semana 3: cada líder apresenta seu Mapa de Responsabilidade Estratégica. Facilitador conduz debrief coletivo. Definição das 3 ações prioritárias de cada líder para as próximas 2 semanas" },
+      { tipo: "Masterclass Mês 1 (90 min) — Online ao Vivo", desc: "Alta Performance Sob Pressão — A Mentalidade do Campeão: Rodrigo Minotauro conecta os princípios do octógono físico ao octógono da liderança. Q&A ao vivo (30 min)" },
+    ],
+    ferramentas: [
+      { nome: "Segurança Psicológica — Protocolo Edmondson", ref: "Amy Edmondson — Harvard Business School (1999, 2018) · Google Project Aristotle (2015)", uso: "3 comportamentos do líder-facilitador no Kick-off: enquadrar o aprendizado como aprendizado, modelar vulnerabilidade própria, praticar curiosidade ativa. Fator #1 de performance de times (Google: 180 times analisados)" },
+      { nome: "Spaced Learning (microlearning semanal)", ref: "Hermann Ebbinghaus — Curva do Esquecimento (1885) · Cepeda et al. — Psychological Science (2006)", uso: "Combater os 70% de esquecimento em 24h com pílulas semanais de reforço espaçado. Cada microlearning retoma o conteúdo da trilha principal com nova aplicação prática" },
+      { nome: "Leadership Circle Profile 360", ref: "Robert Anderson & William Adams — CCL (2006)", uso: "Baseline de competências de liderança criativa (intenção) e reativa (limitante). Gera o Score de Maturidade de Liderança inicial que será comparado no Mês 9" },
+      { nome: "ADDIE — Design Instrucional", ref: "Dick & Carey (1978) — US Military Training · Gagne, Briggs & Wager (1992)", uso: "Estrutura da trilha LMS: Análise (necessidades do público), Design (objetivos de aprendizagem), Desenvolvimento (vídeos + workbooks), Implementação (LMS), Avaliação (quiz + KPIs)" },
+      { nome: "Contrato de Resultado (Etapa 1 — Posição)", ref: "Método Minotauro — Etapa 1: Posição", uso: "Comprometimento irreversível e público com 3 objetivos de desenvolvimento e KPIs-alvo para os 9 meses. Assinado no Kick-off, guardado no Diário do Campeão" },
+    ],
+  },
+  {
+    id: 2,
+    label: "MÊS 2",
+    title: "PREPARO — Início",
+    subtitle: "Abril 2026 · Semanas 5–8",
+    etapa: "AME Fase A (Aprender) · Rotinas de Alta Performance",
+    color: "#0f1f14",
+    accent: "#154834",
+    icon: "②",
+    pronto: [
+      { cat: "Trilha 2 — PREPARO (LMS)", items: ["Vídeo 2.1: O Camping — as 13 semanas do campeão (visão geral do ciclo de preparo) (10 min)", "Vídeo 2.2: Rotina não negociável — como construir a estrutura da semana de alto rendimento (12 min)", "Vídeo 2.3: Foco profundo — como proteger os blocos que geram resultado real (9 min)", "Vídeo 2.4: Eliminar para executar — a arte de dizer não que multiplica resultado (8 min)", "Vídeo 2.5: Diário de Performance — como usar o IA Coach para cobrar você mesmo (7 min)", "Workbook digital Módulo 2 (20 págs): template de design de rotina semanal, checklist de eliminação", "Quiz de fixação (10 questões no LMS)"] },
+      { cat: "Microlearning Semanal (S5–S8)", items: ["S5: 'O que os top 1% dos líderes fazem nas primeiras 2 horas do dia' (4 min)", "S6: 'Foco profundo é treino — como desenvolver capacidade de concentração em 4 semanas' (5 min)", "S7: 'A lista de não-fazer: por que eliminar importa mais do que priorizar' (4 min)", "S8: 'Accountability sem punição — como criar uma cultura onde todo mundo entrega' (5 min)"] },
+      { cat: "Ferramentas Digitais — Central V1", items: ["Template de Rotina Semanal de Alta Performance (Notion/Sheets): blocos de foco, rituais de início e fim de dia, métricas de execução", "Checklist Digital de Eliminação: o que parar de fazer, o que delegar, o que automatizar", "Dashboard de Taxa de Execução individual no LMS: gráfico semanal visível para facilitador e coach"] },
+      { cat: "Protocolo dos Peer Learning Circles", items: ["Guia de Funcionamento dos Peer Circles (PDF, 12 págs): propósito, protocolo de 90 min, como rodar o caso, como dar feedback estruturado, regras de confidencialidade", "Template de Registro de Caso (Google Docs): estrutura para o líder apresentar seu desafio real ao grupo", "Briefing do 1º Evento de Networking: identificação + contato com executivo convidado, perguntas sugeridas"] },
+    ],
+    aovivo: [
+      { tipo: "Masterclass Mês 2 (90 min) — Online ao Vivo", desc: "Disciplina Executiva e Foco: especialista externo em produtividade de alta performance apresenta os sistemas de gestão de atenção usados por CEOs e atletas de elite. Exercício prático ao vivo de design de rotina semanal" },
+      { tipo: "2 Encontros Táticos Quinzenais (90 min cada) — Online ao Vivo", desc: "Encontro 1 (semana 5): revisão do Mapa de Posição — o que mudou, quais ações foram executadas, o que travou. Encontro 2 (semana 7): apresentação da Rotina Semanal desenhada por cada líder, feedback do grupo, ajustes. Taxa de execução reportada ao vivo" },
+      { tipo: "1º Peer Learning Circle (90 min) — Online ao Vivo", desc: "Formação dos grupos de 5–6 líderes (por afinidade de desafio). Apresentação do protocolo. Primeiro caso real: um líder apresenta desafio de execução, o grupo oferece perspectivas usando o protocolo de questionamento (45 min). Debrief do facilitador (15 min)" },
+      { tipo: "1º Evento de Networking (60 min) — Online ao Vivo", desc: "'Líderes em Conversa': bate-papo estruturado com executivo convidado nacional ou internacional. 30 min de conversa mediada pelo facilitador + 30 min de perguntas abertas dos participantes" },
+      { tipo: "Check-in de KPIs Mês 1 (30 min) — Online ao Vivo", desc: "Cada líder reporta em 3 min: (1) o que mudou desde o Kick-off, (2) taxa de execução das ações declaradas, (3) maior obstáculo. IA Coach gera relatório agregado antes da sessão" },
+    ],
+    ferramentas: [
+      { nome: "AME Framework (Aprender–Mudar–Ensinar)", ref: "Método Minotauro — Etapa 2: Preparo", uso: "Ciclo de 13 semanas: 4 semanas aprendendo conteúdo novo, 5 semanas mudando comportamento (prática deliberada), 4 semanas ensinando o que aprendeu (multiplicação e consolidação)" },
+      { nome: "Deep Work / Foco Profundo", ref: "Cal Newport — Deep Work: Rules for Focused Success in a Distracted World (2016)", uso: "Blocos de trabalho cognitivo intenso (2–4h sem interrupção) como hábito não negociável da rotina do líder. Base dos vídeos 2.2 e 2.3" },
+      { nome: "Essentialism — Eliminar para Executar", ref: "Greg McKeown — Essentialism: The Disciplined Pursuit of Less (2014)", uso: "Framework de triagem: Essential (faz você mesmo, máxima energia), Nonessential (delega), Not my job (elimina). Base do vídeo 2.4 e do Checklist de Eliminação" },
+      { nome: "Action Learning Protocol — Peer Circles", ref: "Reg Revans — Action Learning in Practice (1980) · L = P + Q", uso: "Protocolo dos Peer Circles: L (Learning) = P (Programmed Knowledge) + Q (Questioning Insight). Cada sessão é uma rodada de questionamento socrático sobre um desafio real, não palestra" },
+      { nome: "Habit Stacking", ref: "James Clear — Atomic Habits (2018) · B.J. Fogg — Tiny Habits (2019)", uso: "Ancoragem de novos hábitos de liderança em rotinas já existentes (ex: após o standup diário → 10 min de reflexão no Diário). Maximiza a taxa de adesão sem exigir força de vontade adicional" },
+    ],
+  },
+  {
+    id: 3,
+    label: "MÊS 3",
+    title: "PREPARO — Treino",
+    subtitle: "Maio 2026 · Semanas 9–13",
+    etapa: "AME Fase M (Mudar) · Gestão de Energia · Lançamento do Projeto Aplicado",
+    color: "#2d2410",
+    accent: "#e1af58",
+    icon: "③",
+    pronto: [
+      { cat: "Trilha 3 — GESTÃO DE ENERGIA (LMS)", items: ["Vídeo 3.1: Energia é o recurso escasso — por que líderes esgotados tomam decisões ruins (10 min)", "Vídeo 3.2: As 4 dimensões de energia — física, emocional, mental e espiritual no contexto corporativo (12 min)", "Vídeo 3.3: Rituais de recuperação — o que atletas de elite sabem que executivos ignoram (9 min)", "Vídeo 3.4: Sono e performance cognitiva — o que a ciência diz (8 min)", "Vídeo 3.5: Resiliência em ciclos de alta pressão — como manter a performance sem colapsar (10 min)", "Workbook digital Módulo 3 (18 págs): auditoria de energia pessoal, plano de ritmo e recuperação"] },
+      { cat: "Microlearning Semanal (S9–S13)", items: ["S9: 'Como os melhores líderes do mundo gerenciam energia, não tempo' (5 min)", "S10: 'A ciência do sono para líderes: o que 6h vs 8h fazem com suas decisões' (4 min)", "S11: 'Recuperação estratégica: o que acontece no seu cérebro quando você para de trabalhar' (5 min)", "S12: 'Ciclos de sprint e recuperação — como manter alta performance sem colapsar' (4 min)", "S13: 'Ensinando o que você aprendeu — por que ensinar é a forma mais rápida de consolidar' (4 min)"] },
+      { cat: "Kit do Projeto Aplicado Real", items: ["Guia do Projeto Aplicado (PDF, 20 págs): o que é, como escolher o desafio certo, estrutura dos 6 marcos, critérios de avaliação final", "Canvas de Definição do Projeto (1 página): desafio, impacto esperado, recursos necessários, KPIs do projeto, nome do sponsor", "Briefing do Sponsor Executivo (2 págs): o que é esperado, frequência de check-ins, como apoiar sem interferir", "Template de Carta de Aprovação do Sponsor (comprometimento formal)"] },
+      { cat: "Relatório Automático para RH — Mês 2", items: ["Relatório executivo automatizado (PDF, 2 págs por líder): taxa de execução, trilhas concluídas, NPS das sessões, ações declaradas vs. realizadas. Enviado ao CHO antes do Check-in mensal"] },
+    ],
+    aovivo: [
+      { tipo: "Masterclass Mês 3 (90 min) — Online ao Vivo", desc: "Gestão de Energia, Recuperação e Liderança Sustentável: médico do esporte ou pesquisador de saúde executiva apresenta os dados sobre performance cognitiva, sono, atividade física e ritmo. Inclui auditoria de energia ao vivo com cada participante" },
+      { tipo: "2 Encontros Táticos Quinzenais (90 min cada) — Online ao Vivo", desc: "Encontro 1: laboratório de mudança de hábito — cada líder apresenta 1 hábito novo implementado e 1 hábito eliminado, com evidências concretas. Encontro 2: auditoria de energia do grupo — onde estão os maiores vazamentos e como plugar nos próximos 30 dias" },
+      { tipo: "2 Peer Learning Circles (90 min cada) — Online ao Vivo", desc: "Tema guia: Gestão de Energia. Dois líderes diferentes apresentam casos reais de sobrecarga, ritmo ou recuperação para o grupo resolver. Protocolo L=P+Q: questionamento socrático, não conselho" },
+      { tipo: "Lançamento do Projeto Aplicado com Sponsor (60 min) — Online ao Vivo", desc: "Cada líder/dupla apresenta o Canvas do Projeto ao sponsor em 5 min. Sponsor dá feedback, questiona pressupostos e aprova formalmente. Carta de aprovação assinada ao final. Marco irreversível" },
+      { tipo: "Check-in Mensal de KPIs (30 min) — Online ao Vivo", desc: "Primeiro comparativo real: baseline (Mês 0) vs. Mês 3. Cada líder apresenta os números em 2 min. Facilitador destaca padrões coletivos. Relatório consolidado enviado ao RH" },
+    ],
+    ferramentas: [
+      { nome: "The Power of Full Engagement", ref: "Jim Loehr & Tony Schwartz — The Power of Full Engagement (2003)", uso: "Framework das 4 dimensões de energia aplicado à liderança executiva: física (corpo), emocional (relações), mental (foco) e espiritual (propósito). Base da Trilha 3" },
+      { nome: "Ultradian Rhythm — Ciclos de 90 min", ref: "Nathaniel Kleitman (1963) · Peretz Lavie (1986) · Tony Schwartz", uso: "Blocos de trabalho de alto foco em ciclos naturais de 90 min com recuperação ativa entre eles. Fundamenta o design da rotina e o Planner de Alta Performance" },
+      { nome: "Action Learning — Projeto Aplicado Real", ref: "Reg Revans (1980) · GE Crotonville · Harvard Business Impact · McKinsey Learning Lab", uso: "Cada líder trabalha em desafio organizacional real com sponsor. Aprendizado acontece na ação, não na teoria. 25% mais rápido para desenvolver competências vs. programas só teóricos (ATD, 2019)" },
+      { nome: "Kirkpatrick Nível 3 — Rastreamento de Comportamento", ref: "Donald Kirkpatrick — Evaluating Training Programs (1959) · Jim Phillips (1997)", uso: "Check-in mensal de KPIs rastreia mudanças de comportamento reais no trabalho — não apenas satisfação com o programa. Dados coletados desde o Mês 1 para o relatório de ROI final" },
+      { nome: "Diário Reflexivo + Ciclo de Kolb", ref: "John Dewey — How We Think (1910) · David Kolb — Experiential Learning (1984)", uso: "Registro no Diário do Campeão ativa o ciclo de Kolb: Experiência Concreta → Observação Reflexiva → Conceituação Abstrata → Experimentação Ativa. O diário é o instrumento que transforma vivência em aprendizagem" },
+    ],
+  },
+  {
+    id: 4,
+    label: "MÊS 4",
+    title: "EQUIPE — Início",
+    subtitle: "Junho 2026 · Semanas 14–17",
+    etapa: "Segurança Psicológica · Times de Elite · Matriz 9-Box",
+    color: "#1a1a18",
+    accent: "#edece6",
+    icon: "④",
+    pronto: [
+      { cat: "Trilha 4 — EQUIPE (LMS)", items: ["Vídeo 4.1: O Time de 7 do Octógono — a estrutura de um time de elite (10 min, Rodrigo Minotauro)", "Vídeo 4.2: Segurança Psicológica — o fator nº 1 de times de alta performance (12 min)", "Vídeo 4.3: Liderança Situacional — adaptar o estilo ao nível de desenvolvimento de cada pessoa (10 min)", "Vídeo 4.4: O modelo 3F de Feedback — Fato, Feeling, Futuro (9 min)", "Vídeo 4.5: Delegação sem perder o controle — como criar autonomia com accountability (10 min)", "Vídeo 4.6: A Matriz 9-Box — como mapear e desenvolver o potencial do seu time (8 min)", "Workbook digital Módulo 4 (28 págs): Matriz 9-Box do time, roteiro de 1:1, scripts de feedback 3F"] },
+      { cat: "Microlearning Semanal (S14–S17)", items: ["S14: 'Por que os melhores times do mundo são os que mais erram na frente do líder' (4 min)", "S15: 'A diferença entre líderes que criam dependência e líderes que criam multiplicadores' (5 min)", "S16: 'Feedback que funciona: o erro que 90% dos líderes cometem ao dar retorno' (4 min)", "S17: 'O líder gargalo vs. o líder arquiteto: qual você quer ser?' (5 min)"] },
+      { cat: "Ferramentas IA para Liderança de Times", items: ["Matriz 9-Box Digital no LMS: o líder classifica cada membro em performance × potencial e recebe recomendações de desenvolvimento por perfil", "Simulador de Conversas Críticas (IA): o líder escolhe o tipo de conversa (feedback difícil, baixa performance, conflito) e pratica com IA que responde com resistência realista", "Preparador de 1:1 IA: o líder informa o colaborador e o contexto → IA gera pauta sugerida, perguntas de desenvolvimento e pontos de atenção"] },
+      { cat: "eNPS do Time — Formulário de Baseline", items: ["Questionário de engajamento do time (8 questões): NPS de recomendação do líder, percepção de segurança psicológica, clareza de papel, qualidade do feedback recebido. Anônimo, enviado para o time de cada participante como baseline para comparação no Mês 9"] },
+    ],
+    aovivo: [
+      { tipo: "Masterclass Mês 4 (90 min) — Online ao Vivo", desc: "Segurança Psicológica e Conversas Difíceis: professor com pesquisa aplicada (FDC/FGV/INSPER) apresenta os dados de times psicologicamente seguros. Inclui análise de caso real de empresa brasileira e exercício de mapeamento da segurança no próprio time" },
+      { tipo: "2 Encontros Táticos Quinzenais (90 min cada) — Online ao Vivo", desc: "Encontro 1: laboratório de roleplay de feedback 3F — duplas praticam ao vivo com casos reais trazidos pelos participantes (facilitador interrompe e dá coaching em tempo real). Encontro 2: análise coletiva das Matrizes 9-Box — padrões, riscos de time, planos de ação" },
+      { tipo: "2 Peer Learning Circles (90 min cada) — Online ao Vivo", desc: "Tema guia: Liderança de Pessoas. Dois líderes apresentam desafios reais com colaboradores específicos (sem identificar nomes). O grupo resolve coletivamente: perspectivas distintas + perguntas poderosas + síntese de ação em 5 min" },
+      { tipo: "Check-in Mensal de KPIs + Update Projeto Aplicado (45 min) — Online ao Vivo", desc: "KPIs: comparativo dos 4 primeiros meses. Projeto Aplicado: cada líder reporta em 3 min o que descobriu no diagnóstico — o que sobre o problema que não sabia antes de começar a investigar" },
+    ],
+    ferramentas: [
+      { nome: "Segurança Psicológica", ref: "Amy Edmondson — Harvard Business School (1999, 2018) · Google Project Aristotle (2015)", uso: "Fator #1 de performance de times (Google: 180 times analisados). 3 comportamentos do líder: enquadrar trabalho como aprendizado, modelar vulnerabilidade própria, praticar curiosidade ativa" },
+      { nome: "Liderança Situacional II", ref: "Ken Blanchard & Paul Hersey (1969) · The Ken Blanchard Companies", uso: "4 estilos adaptados ao nível de desenvolvimento: Direção (D1 — entusiasta incompetente), Coaching (D2 — aprendiz desiludido), Suporte (D3 — capaz mas inseguro), Delegação (D4 — autossuficiente)" },
+      { nome: "Feedback 3F (Fato, Feeling, Futuro)", ref: "Método Minotauro — Etapa 4: Equipe", uso: "Estrutura de feedback que separa fato observável (sem interpretação), impacto emocional (feeling — o que sinto quando isso acontece) e comportamento esperado no futuro — reduz defensividade e aumenta adesão" },
+      { nome: "Matriz 9-Box (Performance × Potencial)", ref: "GE / McKinsey (1970s) · Korn Ferry Leadership Architect (2014)", uso: "Mapeamento visual do time em 9 quadrantes. Base para decisões de desenvolvimento, promoção e reposicionamento. O Mentor IA gera recomendações de PDI para cada perfil automaticamente" },
+      { nome: "Simulação com IA (Roleplay Conversacional)", ref: "Mursion Inc. (utilizado por 1/3 das Fortune 100) · VirtualSpeech · CoachHub AIMY", uso: "Prática de conversas difíceis com IA antes da conversa real — reduz ansiedade, aumenta eficácia e permite errar sem consequência. Resultado: 89% de melhoria percebida em conversas reais (CoachHub, 2023)" },
+    ],
+  },
+  {
+    id: 5,
+    label: "MÊS 5",
+    title: "EQUIPE + COMBATE",
+    subtitle: "Julho 2026 · Semanas 18–22",
+    etapa: "Accountability · Decisão sob Incerteza · Coaching Sessão 2",
+    color: "#2a2a28",
+    accent: "#767676",
+    icon: "⑤",
+    pronto: [
+      { cat: "Trilha 5 — ACCOUNTABILITY E DECISÃO (LMS)", items: ["Vídeo 5.1: O triângulo dramático — como identificar e sair do papel de vítima, vilão e salvador (10 min)", "Vídeo 5.2: Accountability radical — o líder que assume resultado sem terceirizar responsabilidade (12 min)", "Vídeo 5.3: Bob Sapp Framework — como decidir sangrando (11 min, Rodrigo Minotauro)", "Vídeo 5.4: Decidir com 70% das informações — o framework de decisão adaptativa (9 min)", "Vídeo 5.5: Times autogerenciáveis — o líder que não precisa ser chamado para tudo (10 min)", "Workbook digital Módulo 5 (22 págs): framework de decisão, registro de decisões críticas, protocolo de accountability em 1:1"] },
+      { cat: "Microlearning Semanal (S18–S22)", items: ["S18: 'Accountability começa em você: como líderes de elite assumem o que está ruim sem chorar' (5 min)", "S19: 'O que é liderança adaptativa e por que o seu MBA não te ensinou isso' (5 min)", "S20: 'Decidir com 70% — por que esperar mais informação é uma decisão ruim' (4 min)", "S21: 'O líder que a empresa não aguenta mais: como saber se você está travando tudo' (4 min)", "S22: 'Times que entregam sem cobrar: o segredo do líder que criou autonomia real' (5 min)"] },
+      { cat: "Ferramentas IA — War Games e Decisão", items: ["War Games IA: cenário de crise real no LMS (queda de receita, saída de colaborador-chave, conflito com stakeholder) → líder toma 3 decisões sequenciais sob pressão → IA avalia e dá debrief", "Advogado do Diabo IA: líder apresenta decisão planejada → IA questiona agressivamente pontos cegos, riscos não considerados e pressupostos equivocados", "Rastreador de Decisões Procrastinadas: lista digital onde o líder registra decisões em aberto; IA cobra fechamento em até 7 dias e escalona para o coach se não acontecer"] },
+      { cat: "Relatório Intermediário para RH/C-levels", items: ["Relatório de Progresso do Programa (PDF, 4 págs): NPS agregado, taxa de execução média por mês, evolução de competências 360 por cluster, estágio dos Projetos Aplicados. Enviado antes do Check-in de KPIs"] },
+    ],
+    aovivo: [
+      { tipo: "Coaching Individual — Sessão 2 (60 min) — Online ou Presencial", desc: "Acompanhamento dos 3 objetivos da Sessão 1: o que avançou, o que travou, quais padrões de comportamento se repetem. Coach introduz perspectiva sistêmica sobre o ponto cego mais crítico. Definição de experimento de comportamento para as próximas 4 semanas" },
+      { tipo: "Masterclass Mês 5 (90 min) — Online ao Vivo", desc: "Accountability e Decisão sob Incerteza: especialista em Liderança Adaptativa (referência Heifetz/Harvard Kennedy) distingue desafios técnicos de adaptativos e apresenta o processo de mobilização coletiva para problemas sem solução pronta" },
+      { tipo: "2 Encontros Táticos Quinzenais (90 min cada) — Online ao Vivo", desc: "Encontro 1: War Games ao vivo — facilitador apresenta cenário de crise, grupos de líderes têm 20 min para decidir como agir, debrief das decisões tomadas. Encontro 2: revisão das ações do Projeto Aplicado — qual é a hipótese de solução e o que foi testado até agora" },
+      { tipo: "2 Peer Learning Circles (90 min) — Online ao Vivo", desc: "Tema guia: Accountability e Decisão. Dois líderes apresentam decisões reais que estão ou estiveram postergando. O grupo usa questionamento socrático para ajudar o líder a sair da paralisia" },
+      { tipo: "Check-in Mensal de KPIs + Relatório para RH (30 min) — Online ao Vivo", desc: "Marco de 5 meses. Primeiro relatório formal enviado ao CHO/C-levels antes da sessão. Cada líder apresenta evolução de KPIs. Identificação de quem está acelerando e quem precisa de suporte extra" },
+    ],
+    ferramentas: [
+      { nome: "Liderança Adaptativa", ref: "Ronald Heifetz & Martin Linsky — Leadership on the Line, Harvard Kennedy School (1994, 2009)", uso: "Distinção central: desafios técnicos (têm resposta conhecida — aplique a solução) vs. desafios adaptativos (exigem mudança de valores, crenças e comportamentos — mobilize as pessoas). A maioria dos problemas reais de liderança é adaptativa" },
+      { nome: "Drama Triangle → Winner's Triangle", ref: "Stephen Karpman — Drama Triangle (1968) · Acey Choy — Winner's Triangle (1990)", uso: "Mover o líder de vítima/vilão/salvador para criador/questionador/cuidador. Base do conteúdo de accountability radical no vídeo 5.1. Ferramenta de diagnóstico de dinâmicas disfuncionais de time" },
+      { nome: "Bob Sapp Framework — Decisão sob Pressão", ref: "Método Minotauro — Etapa 3: Combate · Adaptado de Gary Klein — Sources of Power (1998)", uso: "4 etapas: (1) Para e respira — 90 segundos de regulação. (2) O que sei com certeza? (3) O que o gut diz? (4) O que posso reverter se errar? Decide e age. Reduz o tempo médio de decisão em 50% (dado do método)" },
+      { nome: "War Room — Simulação de Crise", ref: "US Military After-Action Review · Perrow (1999) · MIT Sloan Leadership Simulations", uso: "Cenários simulados de crise em ambiente seguro para desenvolver tomada de decisão sob pressão antes de situações reais. Transferência de aprendizagem para o trabalho real: 3× maior vs. treinamento só teórico (ASTD Research)" },
+      { nome: "Coaching Executivo — ICF PCC Framework", ref: "International Coaching Federation — Core Competencies (2019) · ROI mediano: 7× o investimento (ICF, 2022)", uso: "Sessão 2 foca em padrões de comportamento que repetem limitações e definição de experimento de mudança. O coach humano complementa o Mentor IA cobrindo profundidade que a IA não alcança" },
+    ],
+  },
+  {
+    id: 6,
+    label: "MÊS 6",
+    title: "OKRs + MEIO DO PROGRAMA",
+    subtitle: "Agosto 2026 · Semanas 23–26",
+    etapa: "Sprint de Execução · Marco de Metade · AME Fase E (Ensinar)",
+    color: "#0f1f14",
+    accent: "#154834",
+    icon: "⑥",
+    pronto: [
+      { cat: "Trilha 6 — OKRs E CADÊNCIA (LMS)", items: ["Vídeo 6.1: OKRs — o que são, o que não são e por que falham em 80% das empresas (10 min)", "Vídeo 6.2: Como escrever OKRs que realmente funcionam (12 min)", "Vídeo 6.3: Cadência de execução — Weekly, Monthly, Quarterly Reviews que geram resultado (9 min)", "Vídeo 6.4: Scorecard do Líder — o painel de controle que o líder não pode ignorar (8 min)", "Vídeo 6.5: O Sprint de 8 semanas — como transformar estratégia em execução concreta (10 min)", "Workbook digital Módulo 6 (24 págs): template de OKR individual, Scorecard, plano do Sprint"] },
+      { cat: "Trilha IA — Módulo 1 (LMS)", items: ["Vídeo IA 1.1: Prompt Engineering para Gestores — como fazer IA trabalhar por você (10 min)", "Vídeo IA 1.2: Os 10 prompts que todo líder deveria ter (8 min)", "Vídeo IA 1.3: IA para gestão de reuniões — ata automática, decisões registradas, ações rastreadas (7 min)", "Guia prático: 20 prompts testados para liderança (PDF, 8 págs)"] },
+      { cat: "Copiloto de OKRs IA", items: ["O líder registra seus OKRs → IA monitora progresso semanal com base no Diário de Performance e Dashboard de KPIs", "Alertas automáticos: quando OKR está em risco (progresso < 60% com 50% do prazo), IA notifica e sugere ajuste", "Relatório semanal automático: 3 pontos de atenção + 1 ação recomendada por OKR"] },
+      { cat: "Relatório de Marco de Meio Programa", items: ["Relatório executivo completo Meses 1–6 (PDF, 6–8 págs): evolução do Assessment 360 por competência, taxa de execução por líder/mês, NPS agregado, progresso dos Projetos Aplicados, eNPS do time Mês 4 vs. 6", "Feedback 360 dos Pares da Cohort configurado: formulário de 6 perguntas abertas + NPS anônimo entre os participantes"] },
+    ],
+    aovivo: [
+      { tipo: "Masterclass Mês 6 (90 min) — Online ao Vivo", desc: "OKRs, Cadência e Liderança Adaptativa: consultor com track record em grandes empresas brasileiras apresenta os erros mais comuns e os sistemas que funcionam. Segunda metade: como ajustar metas quando o contexto muda sem perder a direção estratégica" },
+      { tipo: "2 Encontros Táticos Quinzenais (90 min cada) — Online ao Vivo", desc: "Encontro 1: lançamento formal do Sprint de Execução de 8 semanas — cada líder apresenta Scorecard trimestral ao grupo. Encontro 2: revisão intermediária do Sprint — semáforo verde/amarelo/vermelho por OKR para cada líder" },
+      { tipo: "Revisão Intermediária do Projeto Aplicado com Sponsor (60 min) — Online ou Presencial", desc: "Cada líder/dupla apresenta ao sponsor: diagnóstico completo, 3 hipóteses avaliadas, solução escolhida, critérios de validação. Sponsor dá feedback crítico. Aprovação para avançar à implementação" },
+      { tipo: "2 Peer Learning Circles (90 min × 2) — Online ao Vivo", desc: "Tema guia: Execução e OKRs. Um líder apresenta OKR que está travado — o grupo usa questionamento socrático para identificar o real obstáculo (raramente é o que o líder acha que é)" },
+      { tipo: "Check-in de Marco — Meio do Programa (60 min) — Online ao Vivo + Relatório para C-levels", desc: "Comparativo completo dos 6 primeiros meses vs. baseline. Entrega do Feedback 360 dos pares — cada líder recebe e lê em tempo real. Facilitador conduz debrief coletivo sobre padrões que aparecem nos feedbacks" },
+    ],
+    ferramentas: [
+      { nome: "OKR Framework", ref: "Andy Grove — Intel (1970s) · John Doerr — Measure What Matters (2018)", uso: "Objectives = o que quero alcançar (qualitativo, inspirador). Key Results = como vou medir o progresso (3–5 métricas específicas e ambiciosas). Ciclo trimestral de revisão. Adotado no Google, Amazon, Spotify" },
+      { nome: "4DX — 4 Disciplines of Execution", ref: "Chris McChesney, Sean Covey & Jim Huling — FranklinCovey (2012)", uso: "Meta Absolutamente Crucial (MAC) + Medidas de Antecipação (lead indicators) + Placar Envolvente (visível ao time) + Cadência de Accountability (reunião semanal de 20 min). Base do Sprint de Execução" },
+      { nome: "Johari Window — Peer Feedback", ref: "Joseph Luft & Harry Ingham — Johari Window (1955)", uso: "O Peer Feedback 360 da cohort expande a 'arena aberta' (o que eu sei e os outros sabem) e reduz o 'ponto cego' (o que os outros sabem sobre mim que eu não sei). Dado mais honesto que o 360 hierárquico" },
+      { nome: "Prompt Engineering — Zero/Few-shot + Chain-of-Thought", ref: "OpenAI Cookbook (2023) · Anthropic Prompt Library (2024) · Wei et al. — Chain-of-Thought Prompting (2022)", uso: "Técnicas para extrair resultados de qualidade do LLM: zero-shot (comando direto), few-shot (exemplos), chain-of-thought (raciocínio passo a passo). Trilha IA Módulo 1 ensina as 3 técnicas aplicadas a gestão" },
+      { nome: "After-Action Review (Debrief de Marco)", ref: "US Army (1973) · Peter Senge — The Fifth Discipline (1990)", uso: "Estrutura do Check-in de Marco: o que planejamos, o que aconteceu, por que houve diferença, o que aprendemos e o que mudamos daqui para frente. Converte experiência em aprendizagem institucional" },
+    ],
+  },
+  {
+    id: 7,
+    label: "MÊS 7",
+    title: "EXECUÇÃO TÁTICA",
+    subtitle: "Setembro 2026 · Semanas 27–30",
+    etapa: "Priorização Extrema · Automações IA · Coaching Sessão 3",
+    color: "#1a2a20",
+    accent: "#e1af58",
+    icon: "⑦",
+    pronto: [
+      { cat: "Trilha 7 — PRIORIZAÇÃO EXTREMA (LMS)", items: ["Vídeo 7.1: Essentialism — como líderes de elite decidem o que importa de verdade (11 min)", "Vídeo 7.2: A regra 20/80 aplicada à liderança — onde estão as alavancas de resultado (9 min)", "Vídeo 7.3: Como analisar e eliminar reuniões sem valor (8 min)", "Vídeo 7.4: Priorização sob pressão — framework de decisão rápida de baixo arrependimento (10 min)", "Vídeo 7.5: Cultura de entrega — como criar um time que não precisa ser cobrado (10 min)", "Workbook digital Módulo 7 (20 págs): matriz de priorização, auditoria de reuniões, plano de eliminação"] },
+      { cat: "Trilha IA — Módulo 2 (LMS)", items: ["Vídeo IA 2.1: Automações para Líderes — o que pode ser automatizado hoje sem código (10 min)", "Vídeo IA 2.2: Ata de reunião automática — setup com IA em 15 minutos (8 min)", "Vídeo IA 2.3: Relatórios automáticos de OKR para o time (9 min)", "Vídeo IA 2.4: Dashboard de gestão com IA — consolidar dados sem depender de TI (8 min)", "Guia prático: 10 automações que recuperam 5h por semana para o líder (PDF, 10 págs)"] },
+      { cat: "Pacote de Automações Básicas (instalável)", items: ["Automação 1: Transcrição + Ata estruturada de reunião (Otter.ai/Fireflies + Claude/GPT + Notion)", "Automação 2: Registro de feedback em base estruturada (Forms + Sheets + IA)", "Automação 3: Update automático de OKRs via formulário semanal do time (Sheets + Make)", "Automação 4: Relatório semanal de progresso do time enviado automaticamente (Make/Zapier + IA)", "Tutorial de instalação de cada automação (vídeo 5–8 min, passo a passo sem código)"] },
+      { cat: "Materiais de Preparação para Apresentação dos Projetos", items: ["Guia de Apresentação do Projeto Aplicado (PDF, 8 págs): estrutura dos 15–20 min, o que incluir, como apresentar dados para executivos, como responder perguntas difíceis", "Template de slides do Projeto (12 slides: problema, diagnóstico, solução, evidências, impacto, próximos passos)"] },
+    ],
+    aovivo: [
+      { tipo: "Coaching Individual — Sessão 3 (60 min) — Online ou Presencial", desc: "Avaliação de progresso nos 3 objetivos. Coach aprofunda o padrão que mais limita o líder (geralmente emergiu no Feedback 360 dos pares). Preparação para a apresentação do Projeto ao C-level: como liderar a conversa com executivos, como apresentar incerteza sem perder credibilidade" },
+      { tipo: "Masterclass Mês 7 (90 min) — Online ao Vivo", desc: "Priorização e Cultura de Entrega: ex-COO ou Diretor de Operações de empresa de grande porte apresenta como construiu cultura de execução consistente. Inclui framework de auditoria de reuniões e processo de criação de times que entregam sem cobrar" },
+      { tipo: "2 Encontros Táticos Quinzenais (90 min cada) — Online ao Vivo", desc: "Encontro 1: laboratório de análise de planos de execução — cada líder apresenta plano da semana e grupo + Copiloto de OKRs IA identificam os 3 ajustes mais críticos. Encontro 2: ensaio rápido dos Projetos Aplicados — cada líder tem 5 min, grupo dá feedback direto" },
+      { tipo: "Evento de Networking — 'Casos de Sucesso em Andamento' (60 min) — Online ao Vivo", desc: "Cada líder tem 3 min para compartilhar o maior avanço real do Projeto Aplicado e o maior aprendizado dos últimos 2 meses. Formato de celebração e inspiração cruzada dentro da cohort" },
+      { tipo: "Check-in Mensal de KPIs (30 min) — Online ao Vivo", desc: "Revisão do Sprint de Execução: semáforo por líder e por OKR. Identificação de quem precisa de suporte extra nas últimas semanas antes da apresentação final. Relatório enviado ao RH" },
+    ],
+    ferramentas: [
+      { nome: "Essentialism — Priorização Extrema", ref: "Greg McKeown — Essentialism: The Disciplined Pursuit of Less (2014)", uso: "A única forma de fazer mais é fazer menos. Framework de triagem em 3 perguntas: Isso é essencial? (Se não for óbvio que sim, é não). Posso delegar? Posso eliminar? Base dos vídeos 7.1 e 7.3" },
+      { nome: "Pareto 80/20 Aplicado à Liderança", ref: "Vilfredo Pareto (1906) · Richard Koch — The 80/20 Principle (1997)", uso: "Identificar as 20% das ações que geram 80% dos resultados e concentrar energia exclusivamente nelas. Ferramenta de análise do workbook do Módulo 7" },
+      { nome: "Make.com + Zapier — Automações No-Code", ref: "Make.com (ex-Integromat, 2012) · Zapier (2011) · n8n (2019)", uso: "Conectar LMS, planilhas, Notion, e-mail e IA em fluxos automáticos sem código. Elimina 3–5h de trabalho manual repetitivo por semana (dado dos participantes do método piloto)" },
+      { nome: "Fireflies.ai + LLM para Gestão de Reuniões", ref: "Fireflies.ai (2016) · Otter.ai (2016) · Anthropic Claude / OpenAI GPT-4", uso: "Transcrição automática + ata estruturada com decisões, ações e responsáveis. Elimina 1–2h de trabalho administrativo por semana sem perder rastreabilidade das decisões" },
+      { nome: "Pyramid Principle (Apresentação para Executivos)", ref: "Barbara Minto — The Pyramid Principle (1987) · Duarte — Resonate (2010)", uso: "Estrutura SCQA para apresentação do Projeto: Situation (contexto), Complication (o problema real), Question (o que precisamos decidir), Answer (nossa recomendação). Conclusão primeiro — sempre" },
+    ],
+  },
+  {
+    id: 8,
+    label: "MÊS 8",
+    title: "COMBATE — Pico",
+    subtitle: "Outubro 2026 · Semanas 31–34",
+    etapa: "Performance Máxima · Presencial com Rodrigo Minotauro · Finalização dos Projetos",
+    color: "#2d2410",
+    accent: "#e1af58",
+    icon: "⑧",
+    pronto: [
+      { cat: "Trilha 8 — COMBATE (LMS)", items: ["Vídeo 8.1: Decidir Sangrando — Bob Sapp Framework completo com casos reais (14 min, Rodrigo Minotauro)", "Vídeo 8.2: Gestão de crise — como o líder performa quando tudo está caindo (11 min)", "Vídeo 8.3: Controle emocional sob pressão — as técnicas que atletas de elite usam (9 min)", "Vídeo 8.4: Comunicação em crise — como informar sem gerar pânico e sem esconder verdade (10 min)", "Vídeo 8.5: Resiliência pós-falha — como o campeão se levanta depois de perder (10 min, Rodrigo Minotauro)", "Workbook digital Módulo 8 (18 págs): diário de decisões críticas dos últimos 8 meses, retrospectiva de performance sob pressão"] },
+      { cat: "Trilha IA — Módulo 3 (LMS)", items: ["Vídeo IA 3.1: Análise de dados para líderes — como ler números sem ser analista (10 min)", "Vídeo IA 3.2: Como usar IA para preparar relatórios executivos em 20 minutos (8 min)", "Vídeo IA 3.3: Dashboard de time com IA — visualizar performance sem depender de TI (9 min)", "Guia prático: 5 análises que todo líder deveria fazer mensalmente (PDF, 8 págs)"] },
+      { cat: "Dashboard ROI Automatizado (por líder)", items: ["Baseline (Mês 0) vs. Mês 8 para cada KPI rastreado (gráfico de linha)", "Taxa de execução por mês (gráfico de barras — 8 meses)", "Evolução de competências 360 por cluster (radar)", "eNPS do time: Mês 4 vs. Mês 8 (comparativo)", "Decisões críticas tomadas e documentadas (número total)", "Automações implementadas no time (número e tipo)", "Relatório consolidado da cohort para RH/C-levels (curadoria do Gerente do Programa)"] },
+      { cat: "Logística da Sessão Presencial com Rodrigo Minotauro", items: ["Local: espaço com área de dinâmica física (sala de treinamento ou academia empresarial) + sala para debrief", "Equipamentos: tatame ou área de dinâmica, câmera e streaming opcional, flip charts, post-its, timer", "Roteiro detalhado da sessão (6–8h): abertura, aquecimento, 3 dinâmicas de estresse controlado, debrief por bloco, encerramento com comprometimento", "Catering e logística de transporte para os participantes"] },
+    ],
+    aovivo: [
+      { tipo: "🥊 Sessão Presencial com Rodrigo Minotauro (6–8h) — PRESENCIAL", desc: "A sessão mais esperada do programa. (1) Abertura: a história de decidir quando estava sangrando — os momentos críticos do campeão (45 min). (2) Dinâmica de estresse físico: exercício que simula pressão real e força decisão no limite (60 min). (3) Simulação de crise em equipe: grupos recebem cenário com 20 min para resolver e apresentar para Rodrigo (60 min). (4) Debrief estruturado: o que o estresse revelou sobre o estilo de decisão de cada líder (45 min). (5) Comprometimento público: cada líder declara sua maior mudança até o Mês 9 (30 min)" },
+      { tipo: "Ensaios dos Projetos Aplicados (120 min) — Online ao Vivo", desc: "Cada líder/dupla apresenta o Projeto em 10 min. A cohort atua como banca — fazem as perguntas mais difíceis que um C-level faria. Facilitador dá feedback sobre clareza, dados, impacto e postura. Líder anota e ajusta antes da apresentação final" },
+      { tipo: "2 Encontros Táticos Quinzenais (90 min cada) — Online ao Vivo", desc: "Encontro 1: resultado final de cada OKR vs. meta — celebração dos avanços, análise honesta das lacunas. Encontro 2: preparação final para o Mês 9 — lista definitiva do que cada líder precisa entregar e fazer nesta semana" },
+      { tipo: "Check-in Mensal + Relatório Executivo Trimestral (60 min) — Online ao Vivo + Relatório para C-levels", desc: "Dashboard ROI apresentado ao RH e C-levels. Comparativo completo de 8 meses de dados. Relatório escrito enviado 3 dias antes. Sessão ao vivo é de Q&A e discussão sobre continuidade do programa" },
+    ],
+    ferramentas: [
+      { nome: "Bob Sapp Framework — Decisão sob Pressão Extrema", ref: "Método Minotauro — Etapa 3: Combate · Gary Klein — Sources of Power (1998)", uso: "4 etapas: Para e respira (90 segundos) → O que sei com certeza? → O que meu gut diz? → O que posso reverter se errar? → Decide e age. Reduz em 50% o tempo médio de decisão em contextos de pressão real" },
+      { nome: "Deliberate Stress Training (Inoculação de Estresse)", ref: "Meichenbaum — Stress Inoculation Training (1985) · Seeherman & Stoll — Military Psychology (2011)", uso: "Exposição controlada a estressores reais (físicos e cognitivos) para desenvolver regulação emocional e tomada de decisão sob pressão. Base das dinâmicas presenciais com Rodrigo Minotauro" },
+      { nome: "After-Action Review (Debrief Estruturado)", ref: "US Army (1973) · Peter Senge — The Fifth Discipline (1990)", uso: "Protocolo de debrief após cada dinâmica presencial: o que aconteceu, o que eu pensei que ia acontecer, por que foi diferente, o que levo para o trabalho amanhã. Cada líder registra no Diário do Campeão" },
+      { nome: "Phillips ROI Methodology — Nível 5", ref: "Jack Phillips — The ROI Methodology · ROI Institute (1997)", uso: "Dashboard ROI calcula: (Benefício líquido − Custo do programa) / Custo do programa × 100. Isolamento do efeito: participantes estimam % da melhoria atribuível ao programa. Dado aceito por CFOs e C-levels" },
+      { nome: "SCQA — Apresentação para C-level", ref: "Barbara Minto — The Pyramid Principle (1987)", uso: "Estrutura dos ensaios de apresentação: Situation → Complication → Question → Answer. Conclusão apresentada nos primeiros 30 segundos — o C-level sabe o resultado antes de ver os dados. Reduz reuniões de 60 para 20 min" },
+    ],
+  },
+  {
+    id: 9,
+    label: "MÊS 9",
+    title: "VITÓRIA E LEGADO",
+    subtitle: "Nov/Dez 2026 · Semanas 35–39",
+    etapa: "Certificação · Apresentação Final ao C-level · Rede Alumni",
+    color: "#2a2010",
+    accent: "#e1af58",
+    icon: "⑨",
+    pronto: [
+      { cat: "Trilha 9 (Bônus) — LEGADO (LMS)", items: ["Vídeo 9.1: Levantando o Cinto — como consolidar a vitória e não deixar o resultado definhar (10 min, Rodrigo Minotauro)", "Vídeo 9.2: O líder como professor — por que ensinar é a forma mais poderosa de liderar (10 min)", "Vídeo 9.3: Plano de Sucessão — como preparar o próximo líder enquanto você cresce (9 min)", "Vídeo 9.4: Cultura de Alta Performance — como institucionalizar o que você aprendeu (10 min)", "Vídeo 9.5: Os próximos 12 meses — como não perder o que foi ganho (8 min)", "Workbook digital Módulo 9 (22 págs): Plano de Legado de Liderança, mapa de sucessão, plano dos próximos 12 meses"] },
+      { cat: "Assessment 360 Final e Relatório de Evolução", items: ["Formulário de Assessment 360 Final enviado para os mesmos avaliadores do Mês 1 (pares, superiores, subordinados)", "Relatório Individual de Evolução (PDF, 4 págs por líder): radar Mês 1 vs. Mês 9, evolução percentual por competência, pontos fortes consolidados, áreas em desenvolvimento", "Relatório ROI Final por líder (PDF, 3 págs): custo do programa vs. impacto financeiro estimado, resumo de todos os 5 níveis Kirkpatrick-Phillips"] },
+      { cat: "Certificados e Materiais da Cerimônia", items: ["Certificado Champion by Design® (impressão premium, assinado por Rodrigo Minotauro): nome, competências desenvolvidas, número da cohort", "Plano de Continuidade de Liderança (documento individual, 2 págs): 3 objetivos dos próximos 12 meses, hábito que não pode parar, comportamento mais transformador", "Totem ou placa da Rede Alumni para o escritório (brinde físico de pertencimento)", "Roteiro detalhado da Cerimônia (guia de 20 págs para o facilitador: abertura, apresentações, entrega dos certificados, declaração pública, networking, encerramento)"] },
+      { cat: "Rede Alumni Champion by Design®", items: ["Grupo exclusivo de Alumni: regras de convivência, canais temáticos (Execução, IA, Times, Estratégia, Projetos)", "Calendário de Eventos Alumni — 12 meses: 2 eventos de networking por ano, acesso a masterclasses futuras com desconto, possibilidade de mentorar a próxima cohort", "Relatório Consolidado Final da Cohort (PDF, 8–10 págs) enviado ao CEO, CHO e sponsor executivo 1 semana antes da cerimônia"] },
+    ],
+    aovivo: [
+      { tipo: "Coaching Individual — Sessão 4 (75 min) — Online ou Presencial", desc: "Avaliação final: coach e líder revisam os 3 objetivos da Sessão 1 — o que se transformou de fato, o que o 360 final revela, quais padrões foram quebrados e quais ainda persistem. Construção do Plano de Continuidade para os 12 meses seguintes" },
+      { tipo: "Último Peer Learning Circle (90 min) — Online ao Vivo", desc: "Sessão de celebração e encerramento: cada líder compartilha em 3 min a maior transformação vivida no programa e o comprometimento para os próximos 12 meses. Protocolo 'pay it forward': o que cada líder vai ensinar para alguém do seu time nos próximos 30 dias" },
+      { tipo: "Apresentação dos Projetos Aplicados ao Painel C-level (3–4h) — PRESENCIAL", desc: "Cada líder/dupla apresenta em 15–20 min: desafio escolhido, processo de diagnóstico, solução implementada, resultados gerados (quantitativos + qualitativos), o que não funcionou e por quê, próximos passos. Painel de C-levels faz perguntas por 5 min cada. Rodrigo Minotauro fecha com comentário" },
+      { tipo: "🏆 Cerimônia 'Levantando o Cinto' (3h) — PRESENCIAL PREMIUM", desc: "(1) Abertura do CEO/CHO: o que este programa significou para a organização (15 min). (2) Depoimentos de 3 líderes participantes (5 min cada). (3) Rodrigo Minotauro: discurso de legado (20 min). (4) Entrega individual dos Certificados por Rodrigo Minotauro + foto. (5) Declaração pública de cada líder: 1 frase sobre seu maior compromisso dos próximos 12 meses. (6) Ativação da Rede Alumni e brinde de encerramento" },
+      { tipo: "Check-in Final de KPIs + Relatório ROI para C-levels (60 min) — Online ao Vivo", desc: "Baseline vs. Mês 9 para todos os KPIs. Assessment 360 comparativo. eNPS do time. Dashboard ROI final ao CHO/C-levels. Discussão sobre renovação do programa, próxima cohort e expansão interna" },
+    ],
+    ferramentas: [
+      { nome: "Assessment 360 Pré/Pós — Nível 3 Kirkpatrick", ref: "Donald Kirkpatrick (1959) · CCL Research — Impact of Leadership Development (2016)", uso: "Comparar baseline Mês 1 com Mês 9 evidencia transformação objetiva. Dado mais poderoso para renovação de contrato e expansão do programa: mostra o que mudou, não o que o participante achou do conteúdo" },
+      { nome: "Phillips ROI — Isolamento do Efeito", ref: "Jack Phillips & Patricia Phillips — ROI Institute (1997–2024)", uso: "Método de estimativa percentual: participantes indicam % da melhoria de KPI atribuível ao programa vs. outros fatores. Dado validado pelos próprios líderes é aceito por CFOs e elimina discussão de causalidade" },
+      { nome: "Leader as Teacher (Líder como Professor)", ref: "Noel Tichy — The Leadership Engine (1997) · GE Crotonville", uso: "O líder que ensina outros cimenta seu próprio aprendizado (AME Fase E). Cada líder recebe a missão de ensinar uma ferramenta do método para alguém do seu time em 30 dias — multiplicação exponencial do programa" },
+      { nome: "Rites of Passage — Cerimônia como Âncora", ref: "Arnold van Gennep — Les Rites de Passage (1909) · Victor Turner — The Ritual Process (1969)", uso: "Ritual de encerramento com 3 fases: separação (do líder anterior), liminaridade (o programa foi a zona de transformação) e incorporação (o novo líder reintegra-se à organização certificado). A cerimônia é âncora psicológica irreversível da transformação" },
+      { nome: "Communities of Practice — Rede Alumni", ref: "Etienne Wenger — Communities of Practice (1998) · ATD Research (2022)", uso: "A Rede Alumni é uma Comunidade de Prática: aprendizado contínuo, identidade compartilhada e domínio conjunto. Aumenta a retenção do investimento do programa em até 40% após o encerramento vs. programas sem alumni network" },
+    ],
+  },
+];
+
+const COL = {
+  pronto: { bg: "#0e1f16", border: "#154834", label: "#a8c8b8", dot: "#154834", sub: "#4a7a60" },
+  aovivo: { bg: "#1e1800", border: "#e1af58", label: "#e1af58", dot: "#e1af58", sub: "#7a6030" },
+  tools:  { bg: "#1a1a18", border: "#767676", label: "#b8b8b4", dot: "#767676", sub: "#505050" },
+};
+
+export default function PlaybookDetalhado() {
+  const [activePhase, setActivePhase] = useState(1);
+  const phase = phases[activePhase];
+
+  const totalPronto = phase.pronto.reduce((a, c) => a + c.items.length, 0);
+
+  return (
+    <div style={{ background: "#2d2b2b", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#edece6", display: "flex", flexDirection: "column", fontSize: 13 }}>
+
+      {/* Header */}
+      <div style={{ background: "#1a1a18", borderBottom: "2px solid #e1af58", padding: "14px 20px 10px", flexShrink: 0 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 9, letterSpacing: 5, color: "#e1af58", fontWeight: 700, marginBottom: 3 }}>CHAMPION BY DESIGN® · OCTÓGONO DA LIDERANÇA®</div>
+            <div style={{ fontSize: 17, fontWeight: 700, color: "#edece6" }}>Entregáveis por Fase — Playbook Detalhado</div>
+            <div style={{ fontSize: 10, color: "#767676", marginTop: 2 }}>Pré-pronto · Ao vivo · Ferramentas e referências · 10 fases · Março–Dezembro 2026</div>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            {[["✦ Pré-pronto", "#154834"], ["● Ao Vivo", "#e1af58"], ["◆ Ferramentas", "#767676"]].map(([l, c]) => (
+              <div key={l} style={{ fontSize: 10, color: c, background: `${c}11`, border: `1px solid ${c}33`, borderRadius: 4, padding: "3px 8px" }}>{l}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+
+        {/* Sidebar */}
+        <div style={{ width: 120, flexShrink: 0, background: "#1a1a18", borderRight: "1px solid #3a3a38", overflowY: "auto" }}>
+          {phases.map((p, i) => {
+            const active = activePhase === i;
+            return (
+              <button key={i} onClick={() => setActivePhase(i)} style={{
+                width: "100%", padding: "9px 10px 9px 12px",
+                background: active ? `${p.color}cc` : "transparent",
+                border: "none", borderLeft: active ? `3px solid ${p.accent}` : "3px solid transparent",
+                borderBottom: "1px solid #3a3a38", cursor: "pointer", textAlign: "left",
+              }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: active ? p.accent : "#767676", letterSpacing: 1 }}>{p.label}</div>
+                <div style={{ fontSize: 10, color: active ? "#edece6" : "#767676", marginTop: 1, lineHeight: 1.3 }}>{p.title}</div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Content */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px 24px" }}>
+
+          {/* Phase title bar */}
+          <div style={{ background: `linear-gradient(135deg,${phase.color} 0%,#2d2b2b 100%)`, border: `1px solid ${phase.accent}44`, borderRadius: 8, padding: "12px 16px", marginBottom: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 30, lineHeight: 1, color: phase.accent }}>{phase.icon}</span>
+              <div>
+                <div style={{ fontSize: 9, letterSpacing: 4, color: phase.accent, marginBottom: 2 }}>{phase.label} · {phase.subtitle}</div>
+                <div style={{ fontSize: 17, fontWeight: 700, color: "#edece6" }}>{phase.title}</div>
+                <div style={{ fontSize: 10, color: "#c8c4b8", marginTop: 1 }}>{phase.etapa}</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              {[[totalPronto, "ITENS PRONTOS", COL.pronto.label, COL.pronto.border], [phase.aovivo.length, "AO VIVO", COL.aovivo.label, COL.aovivo.border], [phase.ferramentas.length, "FERRAMENTAS", COL.tools.label, COL.tools.border]].map(([n, l, c, b]) => (
+                <div key={l} style={{ textAlign: "center", background: `${b}10`, border: `1px solid ${b}30`, borderRadius: 6, padding: "5px 10px" }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: c, lineHeight: 1 }}>{n}</div>
+                  <div style={{ fontSize: 7, color: "#767676", letterSpacing: 1, marginTop: 1 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 3-column grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+
+            {/* PRÉ-PRONTO */}
+            <div style={{ background: COL.pronto.bg, border: `1px solid ${COL.pronto.border}30`, borderRadius: 7, overflow: "hidden" }}>
+              <div style={{ background: `${COL.pronto.border}15`, borderBottom: `1px solid ${COL.pronto.border}25`, padding: "8px 12px" }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: COL.pronto.label, letterSpacing: 2 }}>✦ PRÉ-PRONTO</div>
+                <div style={{ fontSize: 9, color: "#4a7a60", marginTop: 1 }}>Deve existir antes da entrega desta fase</div>
+              </div>
+              <div style={{ padding: "10px 12px" }}>
+                {phase.pronto.map((sec, si) => (
+                  <div key={si} style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 8, fontWeight: 700, color: COL.pronto.label, letterSpacing: 2, marginBottom: 5, background: `${COL.pronto.border}18`, borderRadius: 3, padding: "2px 6px", display: "inline-block" }}>{sec.cat.toUpperCase()}</div>
+                    {sec.items.map((item, ii) => (
+                      <div key={ii} style={{ display: "flex", gap: 6, marginBottom: 4 }}>
+                        <span style={{ color: COL.pronto.dot, fontSize: 8, marginTop: 3, flexShrink: 0 }}>▸</span>
+                        <span style={{ fontSize: 11, color: "#c8c4b8", lineHeight: 1.5 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* AO VIVO */}
+            <div style={{ background: COL.aovivo.bg, border: `1px solid ${COL.aovivo.border}30`, borderRadius: 7, overflow: "hidden" }}>
+              <div style={{ background: `${COL.aovivo.border}15`, borderBottom: `1px solid ${COL.aovivo.border}25`, padding: "8px 12px" }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: COL.aovivo.label, letterSpacing: 2 }}>● AO VIVO</div>
+                <div style={{ fontSize: 9, color: "#a08040", marginTop: 1 }}>Acontece em tempo real nesta fase</div>
+              </div>
+              <div style={{ padding: "10px 12px" }}>
+                {phase.aovivo.map((ev, ei) => (
+                  <div key={ei} style={{ marginBottom: 10, padding: "8px 10px", background: `${COL.aovivo.border}08`, border: `1px solid ${COL.aovivo.border}18`, borderRadius: 6 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: COL.aovivo.label, marginBottom: 4, lineHeight: 1.4 }}>{ev.tipo}</div>
+                    <div style={{ fontSize: 11, color: "#b8a87a", lineHeight: 1.6 }}>{ev.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* FERRAMENTAS */}
+            <div style={{ background: COL.tools.bg, border: `1px solid ${COL.tools.border}30`, borderRadius: 7, overflow: "hidden" }}>
+              <div style={{ background: `${COL.tools.border}15`, borderBottom: `1px solid ${COL.tools.border}25`, padding: "8px 12px" }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: COL.tools.label, letterSpacing: 2 }}>◆ FERRAMENTAS E METODOLOGIA</div>
+                <div style={{ fontSize: 9, color: "#8a8a86", marginTop: 1 }}>Com referência bibliográfica / técnica</div>
+              </div>
+              <div style={{ padding: "10px 12px" }}>
+                {phase.ferramentas.map((f, fi) => (
+                  <div key={fi} style={{ marginBottom: 10, padding: "8px 10px", background: `${COL.tools.border}08`, border: `1px solid ${COL.tools.border}18`, borderRadius: 6 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: COL.tools.label, marginBottom: 2 }}>{f.nome}</div>
+                    <div style={{ fontSize: 9, color: "#767676", fontStyle: "italic", marginBottom: 4 }}>{f.ref}</div>
+                    <div style={{ fontSize: 11, color: "#a0a09a", lineHeight: 1.55 }}>{f.uso}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Nav */}
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
+            <button onClick={() => setActivePhase(Math.max(0, activePhase - 1))} disabled={activePhase === 0}
+              style={{ background: activePhase === 0 ? "transparent" : "#3a3a38", border: "1px solid #4a4a48", color: activePhase === 0 ? "#4a4a48" : "#edece6", padding: "7px 14px", borderRadius: 5, cursor: activePhase === 0 ? "default" : "pointer", fontSize: 11 }}>
+              ← Fase Anterior
+            </button>
+            <span style={{ fontSize: 10, color: "#767676", alignSelf: "center" }}>Fase {activePhase + 1} de {phases.length} · navegue pelo menu lateral</span>
+            <button onClick={() => setActivePhase(Math.min(phases.length - 1, activePhase + 1))} disabled={activePhase === phases.length - 1}
+              style={{ background: activePhase === phases.length - 1 ? "transparent" : "#3a3a38", border: "1px solid #4a4a48", color: activePhase === phases.length - 1 ? "#4a4a48" : "#edece6", padding: "7px 14px", borderRadius: 5, cursor: activePhase === phases.length - 1 ? "default" : "pointer", fontSize: 11 }}>
+              Próxima Fase →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
